@@ -8,3 +8,7 @@
 
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d2f37d211bf64f3cb03dd35a5ae0ff6f)](https://www.codacy.com/app/michulix/charactersheet_desktopapp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Michal-Stempkowski/charactersheet_desktopapp&amp;utm_campaign=Badge_Grade)
+
+_Internal dependencies_:
+
+[![](https://jitpack.io/v/Michal-Stempkowski/charactersheet_internal.svg)](https://jitpack.io/#Michal-Stempkowski/charactersheet_internal)
