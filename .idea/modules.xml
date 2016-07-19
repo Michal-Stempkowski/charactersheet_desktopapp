@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/charactersheet_desktopapp.iml" filepath="$PROJECT_DIR$/.idea/modules/charactersheet_desktopapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/charactersheet_desktopapp_main.iml" filepath="$PROJECT_DIR$/.idea/modules/charactersheet_desktopapp_main.iml" group="charactersheet_desktopapp" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/charactersheet_desktopapp_test.iml" filepath="$PROJECT_DIR$/.idea/modules/charactersheet_desktopapp_test.iml" group="charactersheet_desktopapp" />
+    </modules>
+  </component>
+</project>
