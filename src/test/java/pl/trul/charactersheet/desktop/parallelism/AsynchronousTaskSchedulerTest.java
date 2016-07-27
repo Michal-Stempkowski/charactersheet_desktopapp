@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.trul.charactersheet.desktop.app.DesktopTopLogicFactory;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -86,6 +87,31 @@ public class AsynchronousTaskSchedulerTest {
         uut.scheduleTask(taskSignallingWhenItIsDone);
         // Then:
         expectTaskDone();
+    }
+
+    @Test
+    public void gentleShutdownShouldAlwaysWork() throws InterruptedException {
+        //Given:
+        uut.init();
+        uut.scheduleTask(makeInfiniteTask());
+        // When:
+        uut.gentleShutdown(Duration.ofSeconds(1), Duration.ofSeconds(1));
+        // Then:
+        assertThat(uut.tasksInQueue(), is(equalTo(0)));
+    }
+
+    private CyclingTask makeInfiniteTask() {
+        return new CyclingTask(() -> {
+            try {
+                while (!Thread.interrupted()) {
+                    Thread.sleep(10);
+                }
+            }
+            catch (InterruptedException ignored) {
+
+            }
+        },
+        (TaskState state, ErrorMonad error) -> TaskState.DONE);
     }
 
     private void expectTaskDone() throws InterruptedException {

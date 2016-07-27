@@ -11,6 +11,8 @@ sourceCompatibility = 1.8
 //noinspection GroovyUnusedAssignment
 mainClassName="pl.trul.charactersheet.desktop.MainApp"
 
+applicationDefaultJvmArgs=["-Djava.util.logging.config.file=src/main/resources/logging.properties"]
+
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }

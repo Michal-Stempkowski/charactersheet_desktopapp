@@ -1,7 +1,7 @@
 package pl.trul.charactersheet.desktop.parallelism;
 
 
-import com.github.michal_stempkowski.charactersheet.internal.DomainId;
+import com.github.michal_stempkowski.charactersheet.internal.InternalDomainId;
 import com.github.michal_stempkowski.charactersheet.internal.Target;
 import com.github.michal_stempkowski.charactersheet.internal.app.AppRootLogic;
 import com.github.michal_stempkowski.charactersheet.internal.parallelism.CyclingTask;
@@ -9,10 +9,12 @@ import com.github.michal_stempkowski.charactersheet.internal.parallelism.TaskSch
 import com.github.michal_stempkowski.charactersheet.internal.parallelism.events.TaskFinishedEvent;
 
 import java.rmi.server.UID;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -24,7 +26,7 @@ public class AsynchronousTaskScheduler implements TaskScheduler {
     private Map<UID, CyclingTask> tasks = new HashMap<>();
     private boolean hasStarted = false;
     private final Object mutex = new Object();
-    private Logger logger = AppRootLogic.createLogger(Target.DESKTOP, DomainId.PARALLELISM, getClass().getName());
+    private Logger logger = AppRootLogic.createLogger(Target.DESKTOP, InternalDomainId.PARALLELISM, getClass().getName());
 
     @Override
     public void scheduleTask(CyclingTask cyclingTask) {
@@ -56,6 +58,30 @@ public class AsynchronousTaskScheduler implements TaskScheduler {
             int result = tasks.size();
             logger.fine(String.format("Checking tasks in scheduler, currently %d registered", result));
             return result;
+        }
+    }
+
+    @Override
+    public void gentleShutdown(Duration finalizationTime, Duration lastResortTime) {
+        logger.info("Gentle shutdown has begun");
+        executors.shutdown();
+        if (!safelyAwaitTermination(finalizationTime)) {
+            logger.warning("Last resort shutdown has begun!");
+            executors.shutdownNow();
+            if (!safelyAwaitTermination(lastResortTime)) {
+                logger.severe("Last resort failed, performing emergency shutdown!!!");
+                System.exit(1);
+            }
+        }
+        logger.info("Shutdown performed gracefully");
+    }
+
+    private boolean safelyAwaitTermination(Duration terminationLimit) {
+        try {
+            return executors.awaitTermination(terminationLimit.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ex) {
+            logger.severe("awaitTermination during gentleShutdown has been terminated!");
+            return false;
         }
     }
 

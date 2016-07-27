@@ -7,6 +7,7 @@ import com.github.michal_stempkowski.charactersheet.internal.app.PackageInitiali
 import com.github.michal_stempkowski.charactersheet.internal.app.TopLogicFactory;
 import com.github.michal_stempkowski.charactersheet.internal.events.Event;
 import com.github.michal_stempkowski.charactersheet.internal.events.EventDispatcher;
+import com.github.michal_stempkowski.charactersheet.internal.events.events.InitializeEvent;
 import com.github.michal_stempkowski.charactersheet.internal.events.events.ShutdownPerformedEvent;
 import com.github.michal_stempkowski.charactersheet.internal.parallelism.TaskScheduler;
 import pl.trul.charactersheet.desktop.events.AsynchronousEventDispatcher;
@@ -35,7 +36,8 @@ public class DesktopTopLogicFactory implements TopLogicFactory {
     @Override
     public List<PackageInitializer> getPackageInitializers() {
         return new ArrayList<>(Arrays.asList(
-            new BasicFunctionalityInitializer()
+                new BasicFunctionalityInitializer(),
+                new DesktopFunctionalityInitializer()
         ));
     }
 
@@ -55,7 +57,8 @@ public class DesktopTopLogicFactory implements TopLogicFactory {
     @Override
     public void start() {
         getEventDispatcher().registerListener(ShutdownPerformedEvent.eventType(), this::on_shutdown_performed);
-        runDemoThread();
+//        runDemoThread();
+        AppRootLogic.getEventDispatcher().notifyEvent(new InitializeEvent());
         sleepUntilShutdownPerformed();
         performGentleShutdown();
     }
